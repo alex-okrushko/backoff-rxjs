@@ -1,6 +1,6 @@
 {
   "name": "backoff-rxjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alex-okrushko/rxjs-backoff.git"
+    "url": "git+https://github.com/alex-okrushko/backoff-rxjs.git"
   },
   "keywords": [
     "RxJS",
@@ -20,9 +20,9 @@
   "author": "Alex Okrushko",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/alex-okrushko/rxjs-backoff/issues"
+    "url": "https://github.com/alex-okrushko/backoff-rxjs/issues"
   },
-  "homepage": "https://github.com/alex-okrushko/rxjs-backoff#readme",
+  "homepage": "https://github.com/alex-okrushko/backoff-rxjs#readme",
   "dependencies": {
     "rxjs": "6.1.0"
   },
