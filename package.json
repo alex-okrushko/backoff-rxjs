@@ -1,0 +1,32 @@
+{
+  "name": "backoff-rxjs",
+  "version": "0.0.1",
+  "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-okrushko/rxjs-backoff.git"
+  },
+  "keywords": [
+    "RxJS",
+    "backoff",
+    "exponential"
+  ],
+  "author": "Alex Okrushko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alex-okrushko/rxjs-backoff/issues"
+  },
+  "homepage": "https://github.com/alex-okrushko/rxjs-backoff#readme",
+  "dependencies": {
+    "rxjs": "6.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  }
+}
