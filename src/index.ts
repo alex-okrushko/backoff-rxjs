@@ -1,2 +1,2 @@
-export {retryBackoffExponential, RetryBackoffExponentialConfig} from './operators/retryBackoffExponential';
-export {intervalBackoffExponential, IntervalBackoffExponentialConfig} from './observable/intervalBackoffExponential';
+export {retryBackoff, RetryBackoffConfig} from './operators/retryBackoff';
+export {intervalBackoff, IntervalBackoffConfig} from './observable/intervalBackoff';

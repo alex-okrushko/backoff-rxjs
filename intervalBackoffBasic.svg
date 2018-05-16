@@ -80,7 +80,7 @@
          x="550.0"
          y="40.0"
          style="font-size:22px;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;"
-         xml:space="preserve">intervalBackoffExponential(1000)</text>
+         xml:space="preserve">intervalBackoff(1000)</text>
     </g>
 <g id="operator_intervalExponential(1000)" transform="rotate(0 0.0 120) translate(0.0,120)">
   <path 

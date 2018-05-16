@@ -1,17 +1,16 @@
 # backoff-rxjs
 A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)
 
-## intervalExponential
-![Basic interval Exponential](./intervalExponentialBasic.svg)
+## intervalBackoff
+![Basic interval backoff](./intervalBackoffBasic.svg)
 
-`intervalExponential` works similiarly to `interval` except that it doubles the delay between emissions every time.
-
+`intervalBackoff` works similiarly to `interval` except that it doubles the delay between emissions every time.
 
 | name        | type          | attirbute  | description |
 | ------------- |-------------| -----| ---------------|
-| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [IntervalExponentialConfig](https://github.com/alex-okrushko/backoff-rxjs/blob/277fbbbde4b046733070e2ed64e0b765699fb66b/src/observable/intervalExponential.ts#L6)| required |Can take number as initial interval or a config with initial interval and optional max Interval |
+| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [IntervalBackoffConfig]()| required |Can take number as initial interval or a config with initial interval, optional max Interval and optional backoff delay function (exponential by default) |
 
-`intervalExponential` is especially useful for periodic polls that are reset whenever user activity is detected:
+`interval` is especially useful for periodic polls that are reset whenever user activity is detected:
 ```ts
 fromEvent(document, 'mousemove').pipe(
 
@@ -23,14 +22,14 @@ fromEvent(document, 'mousemove').pipe(
     startWith(null),
 
     // Resetting exponential interval
-    switchMapTo(intervalExponential({initialInterval: LOAD_INTERVAL_MS, maxInterval: MAX_INTERVAL_MS})),
+    switchMapTo(intervalBackoff({initialInterval: LOAD_INTERVAL_MS, maxInterval: MAX_INTERVAL_MS})),
   );
 ```
 
 
-## retryExponentialBackoff
-![Retry Backoff Exponential Image](./retryBackoffExponential.svg)
+## retryBackoff
+![Retry Backoff Exponential Image](./retryBackoff.svg)
 
 | name        | type          | attirbute  | description |
 | ------------- |-------------| -----| ---------------|
-| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [IntervalExponentialConfig](https://github.com/alex-okrushko/backoff-rxjs/blob/277fbbbde4b046733070e2ed64e0b765699fb66b/src/observable/intervalExponential.ts#L6)| required |Can take number as initial interval or a config with initial interval and optional max Interval |
+| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [RetryBackoffConfig]()| required |Can take number as initial interval or a config with initial interval, optional max Interval, optional max number of retry attempts, optional function to cancel reties and optional backoff delay function (exponential by default) |

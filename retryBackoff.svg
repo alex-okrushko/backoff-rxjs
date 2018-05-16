@@ -171,7 +171,7 @@
          x="725.0"
          y="40.0"
          style="font-size:22px;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;"
-         xml:space="preserve">retryBackoffExponential</text>
+         xml:space="preserve">retryBackoff</text>
     </g>
 <g id="operator_retryBackoffExponential" transform="rotate(0 0.0 120) translate(0.0,120)">
   <path 
