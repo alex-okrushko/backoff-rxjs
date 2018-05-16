@@ -1,7 +1,7 @@
 import { Observable, of, timer } from "rxjs";
 import { expand, mapTo } from "rxjs/operators";
 
-import { defaultBackoffDelay, getDelay } from "../utils";
+import { exponentialBackoffDelay, getDelay } from "../utils";
 
 export interface IntervalBackoffConfig {
   initialInterval: number;
@@ -18,7 +18,7 @@ export function intervalBackoff(
   const {
     initialInterval,
     maxInterval = Infinity,
-    backoffDelay = defaultBackoffDelay
+    backoffDelay = exponentialBackoffDelay
   } =
     typeof config === "number" ? { initialInterval: config } : config;
   return of(0).pipe(
