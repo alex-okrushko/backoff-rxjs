@@ -8,7 +8,7 @@ A collection of helpful RxJS operators to deal with backoff strategies (like exp
 
 | name        | type          | attirbute  | description |
 | ------------- |-------------| -----| ---------------|
-| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [IntervalBackoffConfig]()| required |Can take number as initial interval or a config with initial interval, optional max Interval and optional backoff delay function (exponential by default) |
+| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [IntervalBackoffConfig](https://github.com/alex-okrushko/backoff-rxjs/blob/bddb11d6d06d2d2ccdeb12e3c779bc3ae03311db/src/observable/intervalBackoff.ts#L6)| required |Can take number as initial interval or a config with initial interval, optional max Interval and optional backoff delay function (exponential by default) |
 
 `interval` is especially useful for periodic polls that are reset whenever user activity is detected:
 ```ts
@@ -32,4 +32,4 @@ fromEvent(document, 'mousemove').pipe(
 
 | name        | type          | attirbute  | description |
 | ------------- |-------------| -----| ---------------|
-| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [RetryBackoffConfig]()| required |Can take number as initial interval or a config with initial interval, optional max Interval, optional max number of retry attempts, optional function to cancel reties and optional backoff delay function (exponential by default) |
+| config    | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [RetryBackoffConfig](https://github.com/alex-okrushko/backoff-rxjs/blob/bddb11d6d06d2d2ccdeb12e3c779bc3ae03311db/src/operators/retryBackoff.ts#L6)| required |Can take number as initial interval or a config with initial interval, optional max Interval, optional max number of retry attempts, optional function to cancel reties and optional backoff delay function (exponential by default) |
