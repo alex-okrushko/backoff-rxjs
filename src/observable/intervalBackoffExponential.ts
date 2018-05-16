@@ -3,7 +3,7 @@ import {expand, mapTo} from 'rxjs/operators';
 
 import {getDelay} from '../utils';
 
-export interface IntervalExponentialConfig {
+export interface IntervalBackoffExponentialConfig {
   initialInterval: number;
   maxInterval?: number;
 }
@@ -11,7 +11,7 @@ export interface IntervalExponentialConfig {
  * Creates an Observable that emits sequential numbers with exponentially
  * increasing interval of time.
  */
-export function intervalExponential(config: number|IntervalExponentialConfig):
+export function intervalBackoffExponential(config: number|IntervalBackoffExponentialConfig):
     Observable<number> {
   const {initialInterval, maxInterval = Infinity} =
       (typeof config === 'number') ? {initialInterval: config} : config;
