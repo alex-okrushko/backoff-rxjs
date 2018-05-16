@@ -15,7 +15,7 @@ export function intervalExponential(config: number|IntervalExponentialConfig):
     Observable<number> {
   const {initialInterval, maxInterval = Infinity} =
       (typeof config === 'number') ? {initialInterval: config} : config;
-  return of (1).pipe(
+  return of (0).pipe(
       // Expend starts with number 1 and then recursively
       // projects each value to new Observable and puts it back in.
       expand(
