@@ -7,7 +7,7 @@ export interface RetryBackoffConfig<E> {
   initialInterval: number;
   maxAttempts?: number;
   maxInterval?: number;
-  cancelRetry?: (error: E) => boolean;
+  shouldRetry?: (error: E) => boolean;
   backoffDelay?: (iteration: number, initialInterval: number) => number;
 }
 
@@ -16,8 +16,8 @@ export interface RetryBackoffConfig<E> {
  * of an error. If the source Observable calls error, rather than propagating
  * the error call this method will resubscribe to the source Observable with
  * exponentially increasing interval and up to a maximum of count
- * resubscriptions (if provided). Retry can be cancelled at any point if
- * cancelRetry condition is met.
+ * resubscriptions (if provided). Retrying can be cancelled at any point if
+ * shouldRetry returns false.
  */
 export function retryBackoff<E>(
     config: number|RetryBackoffConfig<E>):
@@ -26,14 +26,14 @@ export function retryBackoff<E>(
     initialInterval,
     maxAttempts = Infinity,
     maxInterval = Infinity,
-    cancelRetry = () => false,
+    shouldRetry = () => true,
     backoffDelay = exponentialBackoffDelay,
   } = (typeof config === 'number') ? {initialInterval: config} : config;
   return <T>(source: Observable<T>) => source.pipe(
       retryWhen<T>(errors => zip(errors, interval(0)).pipe(
           // [error, i] come from 'errors' observable
           concatMap(([error, i]) => iif(
-              () => i < maxAttempts && !cancelRetry(error),
+              () => i < maxAttempts && shouldRetry(error),
               timer(getDelay(backoffDelay(i, initialInterval), maxInterval)),
               throwError(error),
               ),
