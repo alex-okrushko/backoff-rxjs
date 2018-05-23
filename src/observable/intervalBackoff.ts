@@ -6,7 +6,7 @@ import { exponentialBackoffDelay, getDelay } from "../utils";
 export interface IntervalBackoffConfig {
   initialInterval: number;
   maxInterval?: number;
-  backoffDelay: (iteration: number, initialInterval: number) => number;
+  backoffDelay?: (iteration: number, initialInterval: number) => number;
 }
 /**
  * Creates an Observable that emits sequential numbers with by default

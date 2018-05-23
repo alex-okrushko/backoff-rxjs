@@ -8,7 +8,7 @@ export interface RetryBackoffConfig<E> {
   maxAttempts?: number;
   maxInterval?: number;
   cancelRetry?: (error: E) => boolean;
-  backoffDelay: (iteration: number, initialInterval: number) => number;
+  backoffDelay?: (iteration: number, initialInterval: number) => number;
 }
 
 /**
