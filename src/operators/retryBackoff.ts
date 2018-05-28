@@ -3,11 +3,11 @@ import {concatMap, retryWhen} from 'rxjs/operators';
 
 import {getDelay, exponentialBackoffDelay} from '../utils';
 
-export interface RetryBackoffConfig<E> {
+export interface RetryBackoffConfig {
   initialInterval: number;
   maxAttempts?: number;
   maxInterval?: number;
-  shouldRetry?: (error: E) => boolean;
+  shouldRetry?: (error: any) => boolean;
   backoffDelay?: (iteration: number, initialInterval: number) => number;
 }
 
@@ -19,8 +19,8 @@ export interface RetryBackoffConfig<E> {
  * resubscriptions (if provided). Retrying can be cancelled at any point if
  * shouldRetry returns false.
  */
-export function retryBackoff<E>(
-    config: number|RetryBackoffConfig<E>):
+export function retryBackoff(
+    config: number|RetryBackoffConfig):
     <T>(source: Observable<T>) => Observable<T> {
   const {
     initialInterval,
