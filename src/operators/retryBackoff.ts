@@ -1,4 +1,4 @@
-import {iif, interval, Observable, throwError, timer, zip} from 'rxjs';
+import {iif, Observable, throwError, timer} from 'rxjs';
 import {concatMap, retryWhen} from 'rxjs/operators';
 
 import {getDelay, exponentialBackoffDelay} from '../utils';
@@ -30,9 +30,8 @@ export function retryBackoff(
     backoffDelay = exponentialBackoffDelay,
   } = (typeof config === 'number') ? {initialInterval: config} : config;
   return <T>(source: Observable<T>) => source.pipe(
-      retryWhen<T>(errors => zip(errors, interval(0)).pipe(
-          // [error, i] come from 'errors' observable
-          concatMap(([error, i]) => iif(
+      retryWhen<T>(errors => errors.pipe(
+          concatMap((error, i) => iif(
               () => i < maxAttempts && shouldRetry(error),
               timer(getDelay(backoffDelay(i, initialInterval), maxInterval)),
               throwError(error),
