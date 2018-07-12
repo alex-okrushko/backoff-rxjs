@@ -6,7 +6,7 @@
     "stripInternal": false,
     "target": "es5",
     "outDir": "./dist",
-    "module": "es2015",
+    "module": "commonjs",
     "declaration": true,
     "lib": [
       "es5",
@@ -28,6 +28,6 @@
   "exclude": [
     "node_modules",
     "dist",
-    "test"
+    "spec"
   ]
 }
