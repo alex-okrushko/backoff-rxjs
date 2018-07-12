@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/alex-okrushko/backoff-rxjs#readme",
   "dependencies": {
-    "rxjs": "6.1.0"
+    "rxjs": "^6.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
