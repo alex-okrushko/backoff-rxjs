@@ -23,7 +23,7 @@
     "url": "https://github.com/alex-okrushko/backoff-rxjs/issues"
   },
   "homepage": "https://github.com/alex-okrushko/backoff-rxjs#readme",
-  "dependencies": {
+  "peerDependencies": {
     "rxjs": "^6.1.0"
   },
   "devDependencies": {
