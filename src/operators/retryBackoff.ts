@@ -4,9 +4,13 @@ import { concatMap, retryWhen } from 'rxjs/operators';
 import { getDelay, exponentialBackoffDelay } from '../utils';
 
 export interface RetryBackoffConfig {
+  // Initial interval. It will eventually go as high as maxInterval.
   initialInterval: number;
-  maxAttempts?: number;
+  // Maximum number of retry attempts.
+  maxRetries?: number;
+  // Maximum delay between retries.
   maxInterval?: number;
+  // Conditional retry.
   shouldRetry?: (error: any) => boolean;
   backoffDelay?: (iteration: number, initialInterval: number) => number;
 }
@@ -24,7 +28,7 @@ export function retryBackoff(
 ): <T>(source: Observable<T>) => Observable<T> {
   const {
     initialInterval,
-    maxAttempts = Infinity,
+    maxRetries = Infinity,
     maxInterval = Infinity,
     shouldRetry = () => true,
     backoffDelay = exponentialBackoffDelay
@@ -35,8 +39,7 @@ export function retryBackoff(
         errors.pipe(
           concatMap((error, i) =>
             iif(
-              // i + 1 because of the zero-based index
-              () => i + 1 < maxAttempts && shouldRetry(error),
+              () => i < maxRetries && shouldRetry(error),
               timer(getDelay(backoffDelay(i, initialInterval), maxInterval)),
               throwError(error)
             )
