@@ -13,7 +13,7 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should handle a basic source that emits next then errors, maxAttempts 4', () => {
+  it('should handle a basic source that emits next then errors, maxRetries 3', () => {
     testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
       const source = cold('--1-2-3-#');
       const subs = [
@@ -28,7 +28,7 @@ describe('retryBackoff operator', () => {
         source.pipe(
           retryBackoff({
             initialInterval: 1,
-            maxAttempts: 4
+            maxRetries: 3
           })
         )
       ).toBe(expected);
@@ -51,7 +51,7 @@ describe('retryBackoff operator', () => {
           errors = 0;
           return x;
         }),
-        retryBackoff({ initialInterval: 1, maxAttempts: retries })
+        retryBackoff({ initialInterval: 1, maxRetries: retries })
       )
       .subscribe(
         (x: number) => {
@@ -76,7 +76,7 @@ describe('retryBackoff operator', () => {
           errors += 1;
           throw 'bad';
         }),
-        retryBackoff({ initialInterval: 1, maxAttempts: retries })
+        retryBackoff({ initialInterval: 1, maxRetries: retries - 1 })
       )
       .subscribe(
         (x: number) => {
@@ -184,7 +184,7 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should handle a basic source that emits next then errors, no count', () => {
+  it('should handle a basic source that emits next then errors, no maxRetries', () => {
     testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
       const source = cold('--1-2-3-#');
       const unsub = '      -------------------------------------!';
@@ -204,7 +204,7 @@ describe('retryBackoff operator', () => {
   });
 
   it(
-    'should handle a source which eventually throws, count=3, and result is ' +
+    'should handle a source which eventually throws, maxRetries=3, and result is ' +
       'unsubscribed early',
     () => {
       testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
@@ -217,7 +217,7 @@ describe('retryBackoff operator', () => {
         const expected = '   --1-2-3----1--';
 
         const result = source.pipe(
-          retryBackoff({ initialInterval: 1, maxAttempts: 3 })
+          retryBackoff({ initialInterval: 1, maxRetries: 3 })
         );
 
         expectObservable(result, unsub).toBe(expected);
@@ -255,7 +255,7 @@ describe('retryBackoff operator', () => {
         concat(throwError('bad!')),
         multicast(() => new Subject()),
         refCount(),
-        retryBackoff({ initialInterval: 1, maxAttempts: 5 })
+        retryBackoff({ initialInterval: 1, maxRetries: 4 })
       )
       .subscribe(
         (x: number) => {
@@ -270,5 +270,31 @@ describe('retryBackoff operator', () => {
           done(new Error('should not be called'));
         }
       );
+  });
+
+  it('should increase the intervals exponentially up to maxInterval', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--1-2-3-#');
+      const subs = [
+        '                  ^-------!',
+        '                  ---------^-------!',
+        '                  -------------------^-------!',
+        '                  -----------------------------^-------!'
+        //                      interval maxed out at 2 ^
+      ];
+      const unsub = '      -------------------------------------!';
+      const expected = '   --1-2-3----1-2-3-----1-2-3-----1-2-3--';
+
+      expectObservable(
+        source.pipe(
+          retryBackoff({
+            initialInterval: 1,
+            maxInterval: 2
+          })
+        ),
+        unsub
+      ).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
   });
 });
