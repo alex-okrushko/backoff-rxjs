@@ -1,7 +1,7 @@
-import {iif, Observable, throwError, timer} from 'rxjs';
-import {concatMap, retryWhen} from 'rxjs/operators';
+import { iif, Observable, throwError, timer } from 'rxjs';
+import { concatMap, retryWhen } from 'rxjs/operators';
 
-import {getDelay, exponentialBackoffDelay} from '../utils';
+import { getDelay, exponentialBackoffDelay } from '../utils';
 
 export interface RetryBackoffConfig {
   initialInterval: number;
@@ -20,23 +20,28 @@ export interface RetryBackoffConfig {
  * shouldRetry returns false.
  */
 export function retryBackoff(
-    config: number|RetryBackoffConfig):
-    <T>(source: Observable<T>) => Observable<T> {
+  config: number | RetryBackoffConfig
+): <T>(source: Observable<T>) => Observable<T> {
   const {
     initialInterval,
     maxAttempts = Infinity,
     maxInterval = Infinity,
     shouldRetry = () => true,
-    backoffDelay = exponentialBackoffDelay,
-  } = (typeof config === 'number') ? {initialInterval: config} : config;
-  return <T>(source: Observable<T>) => source.pipe(
-      retryWhen<T>(errors => errors.pipe(
-          concatMap((error, i) => iif(
-              () => i < maxAttempts && shouldRetry(error),
+    backoffDelay = exponentialBackoffDelay
+  } = typeof config === 'number' ? { initialInterval: config } : config;
+  return <T>(source: Observable<T>) =>
+    source.pipe(
+      retryWhen<T>(errors =>
+        errors.pipe(
+          concatMap((error, i) =>
+            iif(
+              // i + 1 because of the zero-based index
+              () => i + 1 < maxAttempts && shouldRetry(error),
               timer(getDelay(backoffDelay(i, initialInterval), maxInterval)),
-              throwError(error),
-              ),
-          ),
-      )),
-  );
+              throwError(error)
+            )
+          )
+        )
+      )
+    );
 }

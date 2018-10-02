@@ -1,7 +1,7 @@
-import { Observable, of, timer, SchedulerLike, asyncScheduler } from "rxjs";
-import { expand, mapTo } from "rxjs/operators";
+import { Observable, of, timer, SchedulerLike, asyncScheduler } from 'rxjs';
+import { expand, mapTo } from 'rxjs/operators';
 
-import { exponentialBackoffDelay, getDelay } from "../utils";
+import { exponentialBackoffDelay, getDelay } from '../utils';
 
 export interface IntervalBackoffConfig {
   initialInterval: number;
@@ -21,7 +21,7 @@ export function intervalBackoff(
     maxInterval = Infinity,
     backoffDelay = exponentialBackoffDelay
   } =
-    typeof config === "number" ? { initialInterval: config } : config;
+    typeof config === 'number' ? { initialInterval: config } : config;
   initialInterval = (initialInterval < 0) ? 0 : initialInterval; 
   return of(0, scheduler).pipe(
     // Expend starts with number 1 and then recursively
