@@ -297,4 +297,57 @@ describe('retryBackoff operator', () => {
       expectSubscriptions(source.subscriptions).toBe(subs);
     });
   });
+
+  it('should retry until shouldRetry is true', (done: MochaDone) => {
+    let errors = 0;
+    const retries = 2;
+    const isNotSoBad = (error: any) => error === 'not so bad';
+    Observable.create((observer: Observer<number>) => {
+      observer.next(42);
+      observer.complete();
+    })
+      .pipe(
+        map((x: any) => {
+          errors += 1;
+          throw errors < 2 ? 'not so bad' : 'really bad';
+        }),
+        retryBackoff({ initialInterval: 1, shouldRetry: isNotSoBad })
+      )
+      .subscribe(
+        () => {},
+        (err: any) => {
+          expect(errors).to.equal(2);
+          expect(err).to.equal('really bad');
+          done();
+        }
+      );
+  });
+
+  it('should increase the intervals calculated by backoffDelay function', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const constantDelay = (iteration: number, initialInterval: number) =>
+        initialInterval;
+      const source = cold('-1-#');
+      const subs = [
+        '                  ^--!',
+        '                  ----^--!',
+        '                  --------^--!',
+        '                  ------------^--!',
+        '                  ----------------^--!'
+      ];
+      const unsub = '      -------------------!';
+      const expected = '   -1---1---1---1---1--';
+
+      expectObservable(
+        source.pipe(
+          retryBackoff({
+            initialInterval: 1,
+            backoffDelay: constantDelay
+          })
+        ),
+        unsub
+      ).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
 });
