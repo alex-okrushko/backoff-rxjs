@@ -1,0 +1,16 @@
+{
+  "steps": [
+    {
+      "name": "gcr.io/cloud-builders/npm",
+      "args": ["install"]
+    },
+    {
+      "name": "gcr.io/cloud-builders/npm",
+      "args": ["install", "rxjs"]
+    },
+    {
+      "name": "gcr.io/cloud-builders/npm",
+      "args": ["test"]
+    }
+  ]
+}
