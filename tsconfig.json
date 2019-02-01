@@ -6,7 +6,7 @@
     "stripInternal": false,
     "target": "es5",
     "outDir": "./dist",
-    "module": "commonjs",
+    "module": "es2015",
     "declaration": true,
     "lib": [
       "es5",
@@ -25,9 +25,5 @@
   "bazelOptions": {
     "suppressTsconfigOverrideWarnings": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "spec"
-  ]
+  "exclude": ["node_modules", "dist", "spec"]
 }
