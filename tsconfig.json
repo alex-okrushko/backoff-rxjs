@@ -1,29 +1,22 @@
 {
   "compilerOptions": {
-    "removeComments": false,
-    "strict": true,
+    "declaration": false,
+    "importHelpers": false,
+    "lib": ["es2017"],
+    "module": "commonjs",
     "moduleResolution": "node",
-    "stripInternal": false,
-    "target": "es5",
-    "outDir": "./dist",
-    "module": "es2015",
-    "declaration": true,
-    "lib": [
-      "es5",
-      "es2015.iterable",
-      "es2015.collection",
-      "es2015.promise",
-      "es2015.symbol",
-      "es2015.symbol.wellknown",
-      "dom"
-    ]
-  },
-  "formatCodeOptions": {
-    "indentSize": 2,
-    "tabSize": 2
+    "noEmitHelpers": false,
+    "noImplicitAny": true,
+    "outDir": "build",
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es2015"
   },
   "bazelOptions": {
     "suppressTsconfigOverrideWarnings": true
   },
-  "exclude": ["node_modules", "dist", "spec"]
+  "include": ["src/**/*.ts"]
 }

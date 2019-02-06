@@ -1,12 +1,25 @@
 {
   "name": "backoff-rxjs",
-  "version": "6.2.2",
+  "version": "6.3.2",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "es2015": "./dist/esm2015/index.js",
+  "module": "./dist/esm5/index.js",
   "scripts": {
-    "build": "tsc",
-    "test": "mocha --opts spec/mocha.opts spec/**/*-spec.ts"
+    "dist": "yarn run dist:build && yarn run dist:copy",
+    "dist:build": "yarn run dist:clean && yarn run dist:build:cjs && yarn run dist:build:esm2015 && yarn run dist:build:esm5 && yarn run dist:build:bundle",
+    "dist:build:bundle": "webpack --config webpack.config.js && webpack --config webpack.config.js --env.production",
+    "dist:build:cjs": "tsc -p tsconfig-dist-cjs.json",
+    "dist:build:esm2015": "tsc -p tsconfig-dist-esm2015.json",
+    "dist:build:esm5": "tsc -p tsconfig-dist-esm5.json",
+    "dist:clean": "rimraf dist && rimraf bundles/backoff-rxjs.* && mkdirp bundles",
+    "dist:copy": "node scripts/pack.js && cpy bundles/backoff-rxjs.* dist/bundles/ && cpy CHANGELOG.md LICENSE README.md dist/",
+    "lint": "tslint --project tsconfig.json src/**/*.ts",
+    "test": "yarn run lint && yarn run test:build && yarn run test:mocha",
+    "test:build": "yarn run test:clean && tsc -p tsconfig.json",
+    "test:clean": "rimraf build",
+    "test:mocha": "mocha --opts spec/mocha.opts spec/**/*-spec.ts"
   },
   "repository": {
     "type": "git",
@@ -24,21 +37,29 @@
   },
   "homepage": "https://github.com/alex-okrushko/backoff-rxjs#readme",
   "peerDependencies": {
-    "rxjs": "^6.1.0"
+    "rxjs": "^6.4.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.2",
+    "@types/node": "^10.12.21",
     "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
     "chai": "^4.1.2",
+    "cpy-cli": "^2.0.0",
+    "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
+    "rimraf": "^2.6.3",
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
-    "ts-node": "^6.1.2",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.2",
     "tsconfig-paths": "^3.4.0",
     "tslint": "5.9.1",
     "tslint-no-unused-expression-chai": "0.0.3",
-    "typescript": "^2.7.2"
+    "typescript": "^2.7.2",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.2.3",
+    "webpack-rxjs-externals": "^2.0.0"
   }
 }
