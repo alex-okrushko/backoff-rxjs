@@ -1,6 +1,6 @@
 {
   "name": "backoff-rxjs",
-  "version": "6.3.2",
+  "version": "6.3.3",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.2",
-    "@types/node": "^10.12.21",
+    "@types/node": "^12.12.3",
     "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
     "chai": "^4.1.2",
