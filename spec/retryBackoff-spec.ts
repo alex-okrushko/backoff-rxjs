@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { retryBackoff } from '../src/index';
-import { of, Observable, Observer, throwError, Subject } from 'rxjs';
-import { map, mergeMap, concat, multicast, refCount } from 'rxjs/operators';
+import { Observable, Observer, of, Subject, throwError } from 'rxjs';
+import { concat, map, mergeMap, multicast, refCount } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
+import { retryBackoff } from '../src/index';
 
 describe('retryBackoff operator', () => {
   let testScheduler: TestScheduler;
@@ -253,7 +253,7 @@ describe('retryBackoff operator', () => {
     of(1, 2, 3)
       .pipe(
         concat(throwError('bad!')),
-        multicast(() => new Subject()),
+        multicast(() => new Subject<number>()),
         refCount(),
         retryBackoff({ initialInterval: 1, maxRetries: 4 })
       )
