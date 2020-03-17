@@ -399,4 +399,52 @@ describe('retryBackoff operator', () => {
       expectSubscriptions(source.subscriptions).toBe(subs);
     });
   });
+
+  it('should reset the delay when resetOnSuccess is true', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--1-2-3-#');
+      const subs = [
+        '                  ^-------!',
+        '                  ---------^-------!',
+        '                  ------------------^-------!',
+        '                  ---------------------------^-------!'
+        //                 interval always reset to 1 ^
+      ];
+      const unsub = '      -----------------------------------!';
+      const expected = '   --1-2-3----1-2-3----1-2-3----1-2-3--';
+
+      expectObservable(
+        source.pipe(
+          retryBackoff({
+            initialInterval: 1,
+            resetOnSuccess: true
+          })
+        ),
+        unsub
+      ).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should not reset the delay on consecutive errors when resetOnSuccess is true', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--------#');
+      const unsub = '      -------------------------------------!';
+      const subs = [
+        '                  ^-------!                             ',
+        '                  ---------^-------!                    ',
+        '                  -------------------^-------!          ',
+        '                  -------------------------------^-----!'
+      ];
+      const expected = '   --------------------------------------';
+
+      const result = source.pipe(retryBackoff({
+        initialInterval: 1,
+        resetOnSuccess: true
+      }));
+
+      expectObservable(result, unsub).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
 });
