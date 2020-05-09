@@ -350,4 +350,53 @@ describe('retryBackoff operator', () => {
       expectSubscriptions(source.subscriptions).toBe(subs);
     });
   });
+
+  it('should be referentially transparent', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source1 = cold('--#');
+      const source2 = cold('--#');
+      const unsub = '      ---------!';
+      const subs = [
+        '                  ^-!       ',
+        '                  ---^-!    ',
+        '                  -------^-!',
+      ];
+      const expected = '   ----------';
+
+      const op = retryBackoff({
+        initialInterval: 1,
+      });
+
+      expectObservable(source1.pipe(op), unsub).toBe(expected);
+      expectSubscriptions(source1.subscriptions).toBe(subs);
+
+      expectObservable(source2.pipe(op), unsub).toBe(expected);
+      expectSubscriptions(source2.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should ensure interval state is per-subscription', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--#');
+      const sub1 = '      ^--------!';
+      const sub2 = '      ----------^--------!';
+      const subs = [
+        '                  ^-!       ',
+        '                  ---^-!    ',
+        '                  -------^-!',
+        '                  ----------^-!       ',
+        '                  -------------^-!    ',
+        '                  -----------------^-!',
+      ];
+      const expected = '   ----------';
+
+      const result = source.pipe(retryBackoff({
+        initialInterval: 1,
+      }));
+
+      expectObservable(result, sub1).toBe(expected);
+      expectObservable(result, sub2).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
 });
