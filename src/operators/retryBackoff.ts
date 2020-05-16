@@ -2,7 +2,6 @@ import { defer, iif, Observable, throwError, timer } from 'rxjs';
 import { concatMap, retryWhen, tap } from 'rxjs/operators';
 import { exponentialBackoffDelay, getDelay } from '../utils';
 
-
 export interface RetryBackoffConfig {
   // Initial interval. It will eventually go as high as maxInterval.
   initialInterval: number;
@@ -35,28 +34,31 @@ export function retryBackoff(
     maxInterval = Infinity,
     shouldRetry = () => true,
     resetOnSuccess = false,
-    backoffDelay = exponentialBackoffDelay
+    backoffDelay = exponentialBackoffDelay,
   } = typeof config === 'number' ? { initialInterval: config } : config;
-  return <T>(source: Observable<T>) => defer(() => {
-    let index = 0;
-    return source.pipe(
-      retryWhen<T>(errors =>
-        errors.pipe(
-          concatMap(error => {
-            const attempt = index++;
-            return iif(
-              () => attempt < maxRetries && shouldRetry(error),
-              timer(getDelay(backoffDelay(attempt, initialInterval), maxInterval)),
-              throwError(error)
-            )
-          })
-        )
-      ),
-      tap(() => {
-        if (resetOnSuccess) {
-          index = 0;
-        }
-      })
-    );
-  })
+  return <T>(source: Observable<T>) =>
+    defer(() => {
+      let index = 0;
+      return source.pipe(
+        retryWhen<T>(errors =>
+          errors.pipe(
+            concatMap(error => {
+              const attempt = index++;
+              return iif(
+                () => attempt < maxRetries && shouldRetry(error),
+                timer(
+                  getDelay(backoffDelay(attempt, initialInterval), maxInterval)
+                ),
+                throwError(error)
+              );
+            })
+          )
+        ),
+        tap(() => {
+          if (resetOnSuccess) {
+            index = 0;
+          }
+        })
+      );
+    });
 }
