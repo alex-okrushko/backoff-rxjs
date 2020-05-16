@@ -52,7 +52,7 @@ export function retryBackoff(
           })
         )
       ),
-      tap((_: T) => {
+      tap(() => {
         if (resetOnSuccess) {
           index = 0;
         }
