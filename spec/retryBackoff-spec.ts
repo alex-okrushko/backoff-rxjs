@@ -20,7 +20,7 @@ describe('retryBackoff operator', () => {
         '                  ^-------!',
         '                  ---------^-------!',
         '                  -------------------^-------!',
-        '                  -------------------------------^-------!'
+        '                  -------------------------------^-------!',
       ];
       const expected = '   --1-2-3----1-2-3-----1-2-3-------1-2-3-#';
 
@@ -28,7 +28,7 @@ describe('retryBackoff operator', () => {
         source.pipe(
           retryBackoff({
             initialInterval: 1,
-            maxRetries: 3
+            maxRetries: 3,
           })
         )
       ).toBe(expected);
@@ -192,7 +192,7 @@ describe('retryBackoff operator', () => {
         '                  ^-------!                             ',
         '                  ---------^-------!                    ',
         '                  -------------------^-------!          ',
-        '                  -------------------------------^-----!'
+        '                  -------------------------------^-----!',
       ];
       const expected = '   --1-2-3----1-2-3-----1-2-3-------1-2--';
 
@@ -212,7 +212,7 @@ describe('retryBackoff operator', () => {
         const unsub = '      -------------!';
         const subs = [
           '                  ^-------!                ',
-          '                  ---------^---!           '
+          '                  ---------^---!           ',
         ];
         const expected = '   --1-2-3----1--';
 
@@ -231,7 +231,7 @@ describe('retryBackoff operator', () => {
       const source = cold('--1-2-3-#');
       const subs = [
         '                  ^-------!                ',
-        '                  ---------^---!           '
+        '                  ---------^---!           ',
       ];
       const expected = '   --1-2-3----1--';
       const unsub = '      -------------!           ';
@@ -279,7 +279,7 @@ describe('retryBackoff operator', () => {
         '                  ^-------!',
         '                  ---------^-------!',
         '                  -------------------^-------!',
-        '                  -----------------------------^-------!'
+        '                  -----------------------------^-------!',
         //                      interval maxed out at 2 ^
       ];
       const unsub = '      -------------------------------------!';
@@ -289,7 +289,7 @@ describe('retryBackoff operator', () => {
         source.pipe(
           retryBackoff({
             initialInterval: 1,
-            maxInterval: 2
+            maxInterval: 2,
           })
         ),
         unsub
@@ -333,7 +333,7 @@ describe('retryBackoff operator', () => {
         '                  ----^--!',
         '                  --------^--!',
         '                  ------------^--!',
-        '                  ----------------^--!'
+        '                  ----------------^--!',
       ];
       const unsub = '      -------------------!';
       const expected = '   -1---1---1---1---1--';
@@ -342,7 +342,7 @@ describe('retryBackoff operator', () => {
         source.pipe(
           retryBackoff({
             initialInterval: 1,
-            backoffDelay: constantDelay
+            backoffDelay: constantDelay,
           })
         ),
         unsub
@@ -390,9 +390,11 @@ describe('retryBackoff operator', () => {
       ];
       const expected = '   ----------';
 
-      const result = source.pipe(retryBackoff({
-        initialInterval: 1,
-      }));
+      const result = source.pipe(
+        retryBackoff({
+          initialInterval: 1,
+        })
+      );
 
       expectObservable(result, sub1).toBe(expected);
       expectObservable(result, sub2).toBe(expected);
@@ -407,7 +409,7 @@ describe('retryBackoff operator', () => {
         '                  ^-------!',
         '                  ---------^-------!',
         '                  ------------------^-------!',
-        '                  ---------------------------^-------!'
+        '                  ---------------------------^-------!',
         //                 interval always reset to 1 ^
       ];
       const unsub = '      -----------------------------------!';
@@ -417,7 +419,7 @@ describe('retryBackoff operator', () => {
         source.pipe(
           retryBackoff({
             initialInterval: 1,
-            resetOnSuccess: true
+            resetOnSuccess: true,
           })
         ),
         unsub
@@ -434,14 +436,16 @@ describe('retryBackoff operator', () => {
         '                  ^-------!                             ',
         '                  ---------^-------!                    ',
         '                  -------------------^-------!          ',
-        '                  -------------------------------^-----!'
+        '                  -------------------------------^-----!',
       ];
       const expected = '   --------------------------------------';
 
-      const result = source.pipe(retryBackoff({
-        initialInterval: 1,
-        resetOnSuccess: true
-      }));
+      const result = source.pipe(
+        retryBackoff({
+          initialInterval: 1,
+          resetOnSuccess: true,
+        })
+      );
 
       expectObservable(result, unsub).toBe(expected);
       expectSubscriptions(source.subscriptions).toBe(subs);
