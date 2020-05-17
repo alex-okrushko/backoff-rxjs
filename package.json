@@ -58,7 +58,5 @@
     "webpack-cli": "^3.2.3",
     "webpack-rxjs-externals": "^2.0.0"
   },
-  "dependencies": {
-    "rxjs": "^6.5.5"
-  }
+  "dependencies": {}
 }
