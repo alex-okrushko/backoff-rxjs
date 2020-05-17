@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { Observable, Observer, of, Subject, throwError } from 'rxjs';
 import { concat, map, mergeMap, multicast, refCount } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
@@ -9,7 +8,7 @@ describe('retryBackoff operator', () => {
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).to.deep.equal(expected);
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -36,7 +35,7 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should retry a number of times, without error, then complete', (done: MochaDone) => {
+  it('should retry a number of times, without error, then complete', done => {
     let errors = 0;
     const retries = 2;
     Observable.create((observer: Observer<number>) => {
@@ -55,16 +54,16 @@ describe('retryBackoff operator', () => {
       )
       .subscribe(
         (x: number) => {
-          expect(x).to.equal(42);
+          expect(x).toEqual(42);
         },
         (err: any) => {
-          expect('this was called').to.be.true;
+          expect('this was called').toBeTruthy();
         },
         done
       );
   });
 
-  it('should retry a number of times, then call error handler', (done: MochaDone) => {
+  it('should retry a number of times, then call error handler', done => {
     let errors = 0;
     const retries = 2;
     Observable.create((observer: Observer<number>) => {
@@ -80,19 +79,19 @@ describe('retryBackoff operator', () => {
       )
       .subscribe(
         (x: number) => {
-          expect(x).to.equal(42);
+          expect(x).toEqual(42);
         },
         (err: any) => {
-          expect(errors).to.equal(2);
+          expect(errors).toEqual(2);
           done();
         },
         () => {
-          expect('this was called').to.be.true;
+          expect('this was called').toBeTruthy();
         }
       );
   });
 
-  it('should retry until successful completion', (done: MochaDone) => {
+  it('should retry until successful completion', done => {
     let errors = 0;
     const retries = 10;
     Observable.create((observer: Observer<number>) => {
@@ -111,10 +110,10 @@ describe('retryBackoff operator', () => {
       )
       .subscribe(
         (x: number) => {
-          expect(x).to.equal(42);
+          expect(x).toEqual(42);
         },
         (err: any) => {
-          expect('this was called').to.be.true;
+          expect('this was called').toBeTruthy();
         },
         done
       );
@@ -247,7 +246,7 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should retry a synchronous source (multicasted and refCounted) multiple times', (done: MochaDone) => {
+  it('should retry a synchronous source (multicasted and refCounted) multiple times', done => {
     const expected = [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3];
 
     of(1, 2, 3)
@@ -259,11 +258,11 @@ describe('retryBackoff operator', () => {
       )
       .subscribe(
         (x: number) => {
-          expect(x).to.equal(expected.shift());
+          expect(x).toEqual(expected.shift());
         },
         (err: any) => {
-          expect(err).to.equal('bad!');
-          expect(expected.length).to.equal(0);
+          expect(err).toEqual('bad!');
+          expect(expected.length).toEqual(0);
           done();
         },
         () => {
@@ -298,7 +297,7 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should retry until shouldRetry is true', (done: MochaDone) => {
+  it('should retry until shouldRetry is true', done => {
     let errors = 0;
     const retries = 2;
     const isNotSoBad = (error: any) => error === 'not so bad';
@@ -316,8 +315,8 @@ describe('retryBackoff operator', () => {
       .subscribe(
         () => {},
         (err: any) => {
-          expect(errors).to.equal(2);
-          expect(err).to.equal('really bad');
+          expect(errors).toEqual(2);
+          expect(err).toEqual('really bad');
           done();
         }
       );

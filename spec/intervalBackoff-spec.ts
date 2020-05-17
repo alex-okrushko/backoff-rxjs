@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { intervalBackoff } from '../src/index';
 import { take } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
@@ -9,7 +8,7 @@ describe('interval', () => {
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).to.deep.equal(expected);
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -40,7 +39,7 @@ describe('interval', () => {
     });
   });
 
-  it('should emit values until unsubscribed', (done: MochaDone) => {
+  it('should emit values until unsubscribed', done => {
     const values: number[] = [];
     const expected = [0, 1, 2, 3, 4, 5, 6];
     const e1 = intervalBackoff(2);
@@ -49,7 +48,7 @@ describe('interval', () => {
         values.push(x);
         if (x === 6) {
           subscription.unsubscribe();
-          expect(values).to.deep.equal(expected);
+          expect(values).toEqual(expected);
           done();
         }
       },

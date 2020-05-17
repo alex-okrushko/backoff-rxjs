@@ -1,6 +1,6 @@
 {
   "name": "backoff-rxjs",
-  "version": "6.3.3",
+  "version": "6.5.5",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,10 +17,10 @@
     "dist:copy": "node scripts/pack.js && cpy bundles/backoff-rxjs.* dist/bundles/ && cpy CHANGELOG.md LICENSE README.md dist/",
     "lint": "tslint --project tsconfig.json src/**/*.ts",
     "prettier": "prettier --write \"**/*.ts\"",
-    "test": "yarn run lint && yarn run test:build && yarn run test:mocha",
+    "test": "yarn run test:build && yarn run test:jest",
     "test:build": "yarn run test:clean && tsc -p tsconfig.json",
     "test:clean": "rimraf build",
-    "test:mocha": "mocha --opts spec/mocha.opts spec/**/*-spec.ts"
+    "test:jest": "jest"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "exponential"
   ],
   "author": "Alex Okrushko",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/alex-okrushko/backoff-rxjs/issues"
   },
@@ -41,25 +41,19 @@
     "rxjs": "^6.4.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.4",
-    "@types/mocha": "^5.2.2",
+    "@types/jest": "^25.2.2",
     "@types/node": "^12.12.3",
-    "@types/sinon": "^5.0.1",
-    "@types/sinon-chai": "^3.2.0",
-    "chai": "^4.1.2",
     "cpy-cli": "^2.0.0",
+    "jest": "^26.0.1",
     "mkdirp": "^0.5.1",
-    "mocha": "^5.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^2.6.3",
-    "sinon": "^6.0.0",
-    "sinon-chai": "^3.2.0",
+    "ts-jest": "^26.0.0",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.2",
     "tsconfig-paths": "^3.4.0",
     "tslint": "^5.20.0",
-    "tslint-no-unused-expression-chai": "0.0.3",
-    "typescript": "^2.7.2",
+    "typescript": "^3.4",
     "webpack": "^4.29.1",
     "webpack-cli": "^3.2.3",
     "webpack-rxjs-externals": "^2.0.0"
