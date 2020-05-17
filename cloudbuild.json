@@ -1,17 +1,17 @@
 {
   "steps": [
     {
-      "name": "node:13",
+      "name": "node:12",
       "entrypoint": "yarn",
       "args": ["install"]
     },
     {
-      "name": "node:13",
+      "name": "node:12",
       "entrypoint": "yarn",
       "args": ["install", "rxjs"]
     },
     {
-      "name": "node:13",
+      "name": "node:12",
       "entrypoint": "yarn",
       "args": ["test"]
     }
