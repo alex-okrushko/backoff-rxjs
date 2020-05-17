@@ -1,15 +1,18 @@
 {
   "steps": [
     {
-      "name": "gcr.io/cloud-builders/npm",
+      "name": "node",
+      "entrypoint": "yarn",
       "args": ["install"]
     },
     {
-      "name": "gcr.io/cloud-builders/npm",
+      "name": "node",
+      "entrypoint": "yarn",
       "args": ["install", "rxjs"]
     },
     {
-      "name": "gcr.io/cloud-builders/npm",
+      "name": "node",
+      "entrypoint": "yarn",
       "args": ["test"]
     }
   ]
