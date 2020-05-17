@@ -8,7 +8,7 @@
     {
       "name": "node:12",
       "entrypoint": "yarn",
-      "args": ["install", "rxjs"]
+      "args": ["add", "rxjs"]
     },
     {
       "name": "node:12",
