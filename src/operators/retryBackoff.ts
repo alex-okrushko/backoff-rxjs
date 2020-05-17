@@ -1,7 +1,6 @@
-import { iif, Observable, throwError, timer } from 'rxjs';
-import { concatMap, retryWhen } from 'rxjs/operators';
-
-import { getDelay, exponentialBackoffDelay } from '../utils';
+import { defer, iif, Observable, throwError, timer } from 'rxjs';
+import { concatMap, retryWhen, tap } from 'rxjs/operators';
+import { exponentialBackoffDelay, getDelay } from '../utils';
 
 export interface RetryBackoffConfig {
   // Initial interval. It will eventually go as high as maxInterval.
@@ -10,6 +9,9 @@ export interface RetryBackoffConfig {
   maxRetries?: number;
   // Maximum delay between retries.
   maxInterval?: number;
+  // When set to `true` every successful emission will reset the delay and the
+  // error count.
+  resetOnSuccess?: boolean;
   // Conditional retry.
   shouldRetry?: (error: any) => boolean;
   backoffDelay?: (iteration: number, initialInterval: number) => number;
@@ -31,20 +33,32 @@ export function retryBackoff(
     maxRetries = Infinity,
     maxInterval = Infinity,
     shouldRetry = () => true,
-    backoffDelay = exponentialBackoffDelay
+    resetOnSuccess = false,
+    backoffDelay = exponentialBackoffDelay,
   } = typeof config === 'number' ? { initialInterval: config } : config;
   return <T>(source: Observable<T>) =>
-    source.pipe(
-      retryWhen<T>(errors =>
-        errors.pipe(
-          concatMap((error, i) =>
-            iif(
-              () => i < maxRetries && shouldRetry(error),
-              timer(getDelay(backoffDelay(i, initialInterval), maxInterval)),
-              throwError(error)
-            )
+    defer(() => {
+      let index = 0;
+      return source.pipe(
+        retryWhen<T>(errors =>
+          errors.pipe(
+            concatMap(error => {
+              const attempt = index++;
+              return iif(
+                () => attempt < maxRetries && shouldRetry(error),
+                timer(
+                  getDelay(backoffDelay(attempt, initialInterval), maxInterval)
+                ),
+                throwError(error)
+              );
+            })
           )
-        )
-      )
-    );
+        ),
+        tap(() => {
+          if (resetOnSuccess) {
+            index = 0;
+          }
+        })
+      );
+    });
 }

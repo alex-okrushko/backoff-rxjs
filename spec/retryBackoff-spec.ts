@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { retryBackoff } from '../src/index';
-import { of, Observable, Observer, throwError, Subject } from 'rxjs';
-import { map, mergeMap, concat, multicast, refCount } from 'rxjs/operators';
+import { Observable, Observer, of, Subject, throwError } from 'rxjs';
+import { concat, map, mergeMap, multicast, refCount } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
+import { retryBackoff } from '../src/index';
 
 describe('retryBackoff operator', () => {
   let testScheduler: TestScheduler;
@@ -253,7 +253,7 @@ describe('retryBackoff operator', () => {
     of(1, 2, 3)
       .pipe(
         concat(throwError('bad!')),
-        multicast(() => new Subject()),
+        multicast(() => new Subject<number>()),
         refCount(),
         retryBackoff({ initialInterval: 1, maxRetries: 4 })
       )
@@ -347,6 +347,103 @@ describe('retryBackoff operator', () => {
         ),
         unsub
       ).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should be referentially transparent', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source1 = cold('--#');
+      const source2 = cold('--#');
+      const unsub = '      ---------!';
+      const subs = [
+        '                  ^-!       ',
+        '                  ---^-!    ',
+        '                  -------^-!',
+      ];
+      const expected = '   ----------';
+
+      const op = retryBackoff({
+        initialInterval: 1,
+      });
+
+      expectObservable(source1.pipe(op), unsub).toBe(expected);
+      expectSubscriptions(source1.subscriptions).toBe(subs);
+
+      expectObservable(source2.pipe(op), unsub).toBe(expected);
+      expectSubscriptions(source2.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should ensure interval state is per-subscription', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--#');
+      const sub1 = '      ^--------!';
+      const sub2 = '      ----------^--------!';
+      const subs = [
+        '                  ^-!       ',
+        '                  ---^-!    ',
+        '                  -------^-!',
+        '                  ----------^-!       ',
+        '                  -------------^-!    ',
+        '                  -----------------^-!',
+      ];
+      const expected = '   ----------';
+
+      const result = source.pipe(retryBackoff({
+        initialInterval: 1,
+      }));
+
+      expectObservable(result, sub1).toBe(expected);
+      expectObservable(result, sub2).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should reset the delay when resetOnSuccess is true', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--1-2-3-#');
+      const subs = [
+        '                  ^-------!',
+        '                  ---------^-------!',
+        '                  ------------------^-------!',
+        '                  ---------------------------^-------!'
+        //                 interval always reset to 1 ^
+      ];
+      const unsub = '      -----------------------------------!';
+      const expected = '   --1-2-3----1-2-3----1-2-3----1-2-3--';
+
+      expectObservable(
+        source.pipe(
+          retryBackoff({
+            initialInterval: 1,
+            resetOnSuccess: true
+          })
+        ),
+        unsub
+      ).toBe(expected);
+      expectSubscriptions(source.subscriptions).toBe(subs);
+    });
+  });
+
+  it('should not reset the delay on consecutive errors when resetOnSuccess is true', () => {
+    testScheduler.run(({ expectObservable, cold, expectSubscriptions }) => {
+      const source = cold('--------#');
+      const unsub = '      -------------------------------------!';
+      const subs = [
+        '                  ^-------!                             ',
+        '                  ---------^-------!                    ',
+        '                  -------------------^-------!          ',
+        '                  -------------------------------^-----!'
+      ];
+      const expected = '   --------------------------------------';
+
+      const result = source.pipe(retryBackoff({
+        initialInterval: 1,
+        resetOnSuccess: true
+      }));
+
+      expectObservable(result, unsub).toBe(expected);
       expectSubscriptions(source.subscriptions).toBe(subs);
     });
   });
