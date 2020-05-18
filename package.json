@@ -1,6 +1,6 @@
 {
   "name": "backoff-rxjs",
-  "version": "6.5.5",
+  "version": "6.5.6",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
