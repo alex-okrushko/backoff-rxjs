@@ -1,6 +1,6 @@
 {
   "name": "backoff-rxjs",
-  "version": "6.5.6",
+  "version": "6.5.7",
   "description": "A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,11 +22,6 @@
     "test:clean": "rimraf build",
     "test:jest": "jest",
     "coverage": "jest --coverage --coverageDirectory=./coverage && open ./coverage/lcov-report/index.html"
-  },
-  "engines": {
-    "node": ">=10.9.0 <13.0.0",
-    "npm": ">=5.3.0",
-    "yarn": ">=1.13.0 <2.0.0"
   },
   "repository": {
     "type": "git",
