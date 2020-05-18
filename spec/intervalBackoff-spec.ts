@@ -60,4 +60,20 @@ describe('interval', () => {
       }
     );
   });
+
+  it('should backoff until maxInterval', () => {
+    testScheduler.run(({ expectObservable }) => {
+      //        6 frames between 👇 and 👇
+      const expected = '01-2---3-----4-----(5|)';
+      expectObservable(
+        intervalBackoff(
+          {
+            initialInterval: 1,
+            maxInterval: 6,
+          },
+          testScheduler
+        ).pipe(take(6))
+      ).toBe(expected, [0, 1, 2, 3, 4, 5]);
+    });
+  });
 });

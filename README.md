@@ -1,7 +1,7 @@
 # backoff-rxjs
 
 A collection of helpful RxJS operators to deal with backoff strategies (like exponential backoff)
-Angular-in-Depth article about this library is at https://blog.angularindepth.com/power-of-rxjs-when-using-exponential-backoff-a4b8bde276b0
+Angular-in-Depth article about this library is at https://indepth.dev/power-of-rxjs-when-using-exponential-backoff/
 
 ## intervalBackoff
 
@@ -41,3 +41,14 @@ fromEvent(document, 'mousemove').pipe(
 | name   | type                                                                                                                                                                                                                                                    | attirbute | description                                                                                                                                                                                                                          |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | config | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) \| [RetryBackoffConfig](https://github.com/alex-okrushko/backoff-rxjs/blob/master/src/operators/retryBackoff.ts#L6) | required  | Can take number as initial interval or a config with initial interval, optional max Interval, optional max number of retry attempts, optional function to cancel reties and optional backoff delay function (exponential by default) |
+
+```ts
+ this.service.callBackend().pipe(
+   retryBackoff({
+     initialInterval: 100,
+     maxRetries: 12,
+     // 👇 resets retries count and delays between them to init values
+     resetOnSuccess: true
+    })
+ )
+```
