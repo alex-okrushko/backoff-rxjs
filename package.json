@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/alex-okrushko/backoff-rxjs#readme",
   "peerDependencies": {
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.5.5 || ^7.0.0-rc"
   },
   "devDependencies": {
     "@types/jest": "^25.2.2",
