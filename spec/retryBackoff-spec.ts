@@ -1,7 +1,7 @@
 import { Observable, Observer, of, Subject, throwError } from 'rxjs';
 import { concat, map, mergeMap, multicast, refCount } from 'rxjs/operators';
 import { TestScheduler } from 'rxjs/testing';
-import { retryBackoff } from '../src/index';
+import { retryBackoff } from '../src';
 
 describe('retryBackoff operator', () => {
   let testScheduler: TestScheduler;
@@ -56,7 +56,7 @@ describe('retryBackoff operator', () => {
         (x: number) => {
           expect(x).toEqual(42);
         },
-        (err: any) => {
+        () => {
           expect('this was called').toBeTruthy();
         },
         done
@@ -71,7 +71,7 @@ describe('retryBackoff operator', () => {
       observer.complete();
     })
       .pipe(
-        map((x: any) => {
+        map(() => {
           errors += 1;
           throw 'bad';
         }),
@@ -81,7 +81,7 @@ describe('retryBackoff operator', () => {
         (x: number) => {
           expect(x).toEqual(42);
         },
-        (err: any) => {
+        () => {
           expect(errors).toEqual(2);
           done();
         },
@@ -112,7 +112,7 @@ describe('retryBackoff operator', () => {
         (x: number) => {
           expect(x).toEqual(42);
         },
-        (err: any) => {
+        () => {
           expect('this was called').toBeTruthy();
         },
         done
@@ -299,14 +299,13 @@ describe('retryBackoff operator', () => {
 
   it('should retry until shouldRetry is true', done => {
     let errors = 0;
-    const retries = 2;
     const isNotSoBad = (error: any) => error === 'not so bad';
     Observable.create((observer: Observer<number>) => {
       observer.next(42);
       observer.complete();
     })
       .pipe(
-        map((x: any) => {
+        map(() => {
           errors += 1;
           throw errors < 2 ? 'not so bad' : 'really bad';
         }),
