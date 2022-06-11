@@ -1,5 +1,16 @@
-import { Observable, Observer, of, Subject, throwError } from 'rxjs';
-import { concat, map, mergeMap, multicast, refCount } from 'rxjs/operators';
+import {
+  Observable,
+  Observer,
+  of,
+  Subject,
+  throwError,
+  concat,
+  map,
+  mergeMap,
+  share,
+  from,
+  concatWith,
+} from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { retryBackoff } from '../src';
 
@@ -38,7 +49,7 @@ describe('retryBackoff operator', () => {
   it('should retry a number of times, without error, then complete', done => {
     let errors = 0;
     const retries = 2;
-    Observable.create((observer: Observer<number>) => {
+    new Observable((observer: Observer<number>) => {
       observer.next(42);
       observer.complete();
     })
@@ -52,21 +63,21 @@ describe('retryBackoff operator', () => {
         }),
         retryBackoff({ initialInterval: 1, maxRetries: retries })
       )
-      .subscribe(
-        (x: number) => {
+      .subscribe({
+        next: (x: number) => {
           expect(x).toEqual(42);
         },
-        () => {
+        error: () => {
           expect('this was called').toBeTruthy();
         },
-        done
-      );
+        complete: done
+  });
   });
 
   it('should retry a number of times, then call error handler', done => {
     let errors = 0;
     const retries = 2;
-    Observable.create((observer: Observer<number>) => {
+    new Observable((observer: Observer<number>) => {
       observer.next(42);
       observer.complete();
     })
@@ -77,24 +88,24 @@ describe('retryBackoff operator', () => {
         }),
         retryBackoff({ initialInterval: 1, maxRetries: retries - 1 })
       )
-      .subscribe(
-        (x: number) => {
+      .subscribe({
+        next: (x: number) => {
           expect(x).toEqual(42);
         },
-        () => {
+        error: () => {
           expect(errors).toEqual(2);
           done();
         },
-        () => {
+        complete: () => {
           expect('this was called').toBeTruthy();
         }
-      );
+  });
   });
 
   it('should retry until successful completion', done => {
     let errors = 0;
     const retries = 10;
-    Observable.create((observer: Observer<number>) => {
+    new Observable((observer: Observer<number>) => {
       observer.next(42);
       observer.complete();
     })
@@ -108,15 +119,15 @@ describe('retryBackoff operator', () => {
         }),
         retryBackoff({ initialInterval: 1 })
       )
-      .subscribe(
-        (x: number) => {
+      .subscribe({
+        next: (x: number) => {
           expect(x).toEqual(42);
         },
-        () => {
+        error: () => {
           expect('this was called').toBeTruthy();
         },
-        done
-      );
+        complete:done
+  });
   });
 
   it('should handle an empty source', () => {
@@ -246,29 +257,32 @@ describe('retryBackoff operator', () => {
     });
   });
 
-  it('should retry a synchronous source (multicasted and refCounted) multiple times', done => {
+  it('should retry a synchronous source (multicasted) multiple times', done => {
     const expected = [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3];
 
-    of(1, 2, 3)
+    const ERR = new Error('bad!');
+
+    from([1, 2, 3])
       .pipe(
-        concat(throwError('bad!')),
-        multicast(() => new Subject<number>()),
-        refCount(),
+        concatWith(throwError(() => ERR)),
+        share({
+          connector: () => new Subject(),
+        }),
         retryBackoff({ initialInterval: 1, maxRetries: 4 })
       )
-      .subscribe(
-        (x: number) => {
+      .subscribe({
+        next: (x: number) => {
           expect(x).toEqual(expected.shift());
         },
-        (err: any) => {
-          expect(err).toEqual('bad!');
+        error: (err: unknown) => {
+          expect(err).toEqual(ERR);
           expect(expected.length).toEqual(0);
           done();
         },
-        () => {
+        complete: () => {
           done(new Error('should not be called'));
-        }
-      );
+        },
+      });
   });
 
   it('should increase the intervals exponentially up to maxInterval', () => {
@@ -300,7 +314,7 @@ describe('retryBackoff operator', () => {
   it('should retry until shouldRetry is true', done => {
     let errors = 0;
     const isNotSoBad = (error: any) => error === 'not so bad';
-    Observable.create((observer: Observer<number>) => {
+    new Observable((observer: Observer<number>) => {
       observer.next(42);
       observer.complete();
     })
@@ -311,14 +325,14 @@ describe('retryBackoff operator', () => {
         }),
         retryBackoff({ initialInterval: 1, shouldRetry: isNotSoBad })
       )
-      .subscribe(
-        () => {},
-        (err: any) => {
+      .subscribe({
+        next:() => {},
+        error:(err: unknown) => {
           expect(errors).toEqual(2);
           expect(err).toEqual('really bad');
           done();
         }
-      );
+  });
   });
 
   it('should increase the intervals calculated by backoffDelay function', () => {
