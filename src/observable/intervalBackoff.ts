@@ -1,6 +1,4 @@
-import { Observable, of, timer, SchedulerLike, asyncScheduler } from 'rxjs';
-import { expand, mapTo } from 'rxjs/operators';
-
+import { Observable, of, timer, SchedulerLike, asyncScheduler, expand, mapTo } from 'rxjs';
 import { exponentialBackoffDelay, getDelay } from '../utils';
 
 export interface IntervalBackoffConfig {
@@ -25,7 +23,7 @@ export function intervalBackoff(
   return of(0, scheduler).pipe(
     // Expend starts with number 1 and then recursively
     // projects each value to new Observable and puts it back in.
-    expand(iteration =>
+    expand((iteration: number) =>
       timer(getDelay(backoffDelay(iteration, initialInterval), maxInterval))
         // Once timer is complete, iteration is increased
         .pipe(mapTo(iteration + 1))
